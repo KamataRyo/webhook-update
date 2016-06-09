@@ -1,0 +1,47 @@
+sudo: false
+
+language:
+  - php
+
+php:
+  - 5.3
+  - 5.6
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
+
+branches:
+  only:
+  - master
+  - "/^v?[0-9](\\.[0-9])*/"
+
+before_script:
+  - curl https://raw.githubusercontent.com/KamataRyo/travis-sctipts-collection/master/install-wp-tests.sh > ./install-wp-tests.sh
+  - bash ./install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+  - npm install
+
+script:
+- phpunit
+
+after_success:
+- npm run generatePot
+- curl https://raw.githubusercontent.com/KamataRyo/travis-sctipts-collection/master/deploy-wp-plugin.sh | bash
+
+matrix:
+  include:
+  - php: 5.6
+    env: WP_VERSION=latest WP_MULTISITE=1
+
+env:
+  matrix:
+  - WP_VERSION=latest WP_MULTISITE=0
+  - WP_VERSION=4.0 WP_MULTISITE=0
+  global:
+  - WP_VERSION_TO_DEPLOY: latest
+  - PHP_VERSION_TO_DEPLOY: 5.6
+  - WP_MULTISITE_TO_DEPLOY: 0
+  - SVN_REF: https://plugins.svn.wordpress.org/webhook-update/
+  - GH_REF: github.com/KamataRyo/webhook-update.git
+  - secure: "W2lOxlcuAgTHDEyv6LRNksQPXvlDdUQAu5/KfYsnN9nXdjR0zhyy8fyu4ZwvsilSloWVkjYGnUVsFt/2I3zwBB0MUj6qWEk9sihT93IzRhwjPI09CEGsXs6lC2cy7GMHxSqfbsnu4lGs5fntmxzob2G7mfCfzzQMOTr77BOOLiTMRWJx+I9cws3y3oVlwcWWS+jWwHI+/hyB7EbF/K4X8Rf5bXspBhCwT8uCRDAj9NeGosOJORgBN8c5GbuAkmwlQHbyfMJue6FrTDS7vRCdz9P+mjPt2LrI5bv/IhO6rVuQEm08qjdIQMrE6bQ8VMTM6FPZ1eLnVJes7hyt/IBmpm2WQlKqZj5I/UjQf8UQASBhLuigefSPlBjwilpBu8uDLh1T5o6uqwe6XbWH+Zii06wmEJdouXIGITcj2teOc7knUCKt+sekzno3KuiB9I0gpEbAOFDtJDYcyUFHhEaJMsicr33xlep1phoeRJBaGDBPfnyP5Q4R1cE5QINvLGPoV68vzqP2+VJ63k4X/JTTEP5+yKCWsES5QbBamCKPG/RDtdj2CkdaOjpavSuyUwsFw+ifnTLfLbmuGkcseulx9EEMNob1d43veBNASpApaX8KFAGg4Zy9n7uJwtgm2S28fIIYiGGJUKMTXxt9GEYmSDBiMGN1lOpgabnwvqMNhLk="

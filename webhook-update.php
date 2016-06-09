@@ -9,17 +9,18 @@ Author URI: http://biwako.io/
 */
 
 $webhook = new Webhook();
-$e_travis->register();
+$webhook->register();
 
 
 class Webhook {
 
-	function register() {
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
-	}
+	// function register() {
+	// 	add_action( 'wp_ajax_gh_update', array( $this, '_plugins_loaded' ) );
+	// }
 
-	public function plugins_loaded() {
-	}
+	// public function _plugins_loaded() {
+	// 	add_action( 'wp_ajax_gh_update', '_gh_update' );
+	// }
 
 }
 
